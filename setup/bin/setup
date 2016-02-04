@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+
+from __future__ import print_function
+
+import sys
+from json import dumps
+from getpass import getpass
+
+
+from six.moves import input
+from passlib.hash import sha512_crypt
+
+
+def main(args):
+    myhostname = input("Enter the hostname for this mail server: ")
+    domain = input("Enter the domain for this mail server: ")
+    password = getpass("Enter password for admin@{}: ".format(domain))
+
+    hash = sha512_crypt.encrypt(password)
+
+    config = {
+        "settings": {
+            "myhostname": myhostname,
+        },
+        "domains": {
+            domain: [
+                {
+                    "email": "admin@{}".format(domain),
+                    "password": hash,
+                },
+            ],
+        },
+    }
+
+    with open(args[0], "wb") as f:
+        f.write(dumps(config, indent=4))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

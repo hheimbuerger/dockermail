@@ -1,3 +1,9 @@
+setup:
+  build: ./setup
+  volume_driver: local
+  volumes:
+    - mailsettings:/mail_settings
+
 core:
   build: ./core
   ports:
