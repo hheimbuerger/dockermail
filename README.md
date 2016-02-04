@@ -7,6 +7,14 @@ The setup is modular and has:
 * `core` -  base SMTP and IMAP server
 * `opendkim` - adds DKIM signing service for outgoing mail
 * `amavis` - adds incoming SPAM filter
+* `setup` - initial setup and management tools
+
+Features:
+* SSL/TLS IMAP and SMTP
+* Support for multiple domains
+* Support for wildcard aliases
+* OpenDKIM signing
+* Anti Spam filtering
 
 Please see the README in each folder for more information.
 
@@ -33,7 +41,8 @@ You can test your configuration using the excellent [mail-tester.com](https://ww
 Assuming you follow READMEs to set up all the containers, you should just be able to run:
 
 ```bash
-docker-compose up
+docker-compose run setup
+docker-compose up -d
 ```
 This will spin up all the containers and link them together, easy!
 
