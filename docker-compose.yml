@@ -10,17 +10,22 @@ core:
     - "25:25"
     - "143:143"
     - "587:587"
+  volume_driver: local
   volumes:
-    - /opt/dockermail/settings:/mail_settings
-    - /opt/dockermail/vmail:/vmail
+    - mailsettings:/mail_settings
+    - maildata:/vmail
   links:
    - opendkim
    - amavis
+
 opendkim:
   build: ./opendkim
+  volume_driver: local
   volumes:
-    - /opt/dockermail/settings:/mail_settings
+    - mailsettings:/mail_settings
+
 amavis:
   build: ./amavis
+  volume_driver: local
   volumes:
-    - /opt/dockermail/settings:/mail_settings
+    - mailsettings:/mail_settings
