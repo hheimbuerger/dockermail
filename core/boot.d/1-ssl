@@ -15,3 +15,18 @@ if [ -f /mail_settings/ssl-cert-snakeoil.pem ]; then
 else
 	cp /etc/ssl/certs/ssl-cert-snakeoil.pem /mail_settings/ssl-cert-snakeoil.pem
 fi
+
+# Check SSL Certificate for IMAPS
+# First the key file
+if [ -f /mail_settings/dovecot.key ]; then
+	cp /mail_settings/dovecot.key /etc/ssl/private/dovecot.key
+else
+	cp /etc/ssl/private/ssl-cert-snakeoil.key /mail_settings/dovecot.key
+fi
+
+# Then the pem file
+if [ -f /mail_settings/dovecot.pem ]; then
+	cp /mail_settings/dovecot.pem /etc/ssl/certs/dovecot.pem
+else
+	cp /etc/ssl/certs/ssl-cert-snakeoil.pem /mail_settings/dovecot.pem
+fi

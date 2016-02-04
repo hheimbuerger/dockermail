@@ -10,6 +10,7 @@ core:
     - "25:25"
     - "143:143"
     - "587:587"
+    - "993:993"
   volume_driver: local
   volumes:
     - mailsettings:/mail_settings
