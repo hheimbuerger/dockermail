@@ -1,0 +1,40 @@
+#!/bin/bash
+echo 'Running pfix-srsd boot script'
+
+POSTFIX_MAIN_CF=/etc/postfix/main.cf
+
+env_dump=$(printenv)
+
+SRSD_CONFIG_HEADER="# SRS - dockermail - start"
+SRSD_CONFIG_FOOTER="# SRS - dockermail - end"
+
+function remove_srsd () {
+  if grep -q "$SRSD_CONFIG_HEADER" "$POSTFIX_MAIN_CF"; then
+    sed "/$SRSD_CONFIG_HEADER/,/$SRSD_CONFIG_FOOTER/d" "$POSTFIX_MAIN_CF" -i
+  fi
+}
+
+function add_srsd () {
+  if ! grep -q "$SRSD_CONFIG_HEADER" "$POSTFIX_MAIN_CF"; then
+    echo "$SRSD_CONFIG_HEADER" >> "$POSTFIX_MAIN_CF"
+    echo "recipient_canonical_maps = hash:/etc/postfix/pfix-no-srs.cf, tcp:srsd:10002" >> "$POSTFIX_MAIN_CF"
+    echo "recipient_canonical_classes = envelope_recipient" >> "$POSTFIX_MAIN_CF"
+    echo "sender_canonical_maps = hash:/etc/postfix/pfix-no-srs.cf, tcp:srsd:10001" >> "$POSTFIX_MAIN_CF"
+    echo "sender_canonical_classes = envelope_sender" >> "$POSTFIX_MAIN_CF"
+    echo "$SRSD_CONFIG_FOOTER" >> "$POSTFIX_MAIN_CF"
+  else
+    echo "Warning: $POSTFIX_MAIN_CF already contains OpenDKIM configuration, skipping"
+  fi
+}
+
+if [[ $env_dump =~ ^(.+SRSD)= ]] ; then
+  if [ ! -z "${BASH_REMATCH[1]}" ]; then
+    echo "SRSD env set, enabling sender rewriting"
+    add_srsd
+  fi
+else
+  echo "Cant find SRSD env, sender rewriting will be disabled"
+  remove_srsd
+fi
+
+echo 'Finished srsd boot script'
